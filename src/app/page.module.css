@@ -432,6 +432,19 @@
   font-weight: 500;
 }
 
+.cardStockWarn {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--clr-warning);
+}
+
+.cardStockEmpty {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--clr-error);
+}
+
+
 /* ─── LOADING SKELETON ──────────────────────────────────────────────────────── */
 .loadingGrid {
   display: grid;

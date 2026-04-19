@@ -39,10 +39,18 @@ function ProductCard({ product }) {
           <span className={styles.cardPrice}>
             ${parseFloat(product.precioProducto).toFixed(2)}
           </span>
-          <span className={styles.cardStock}>
-            {product.cantidadProducto > 0
-              ? `${product.cantidadProducto} disponibles`
-              : 'Agotado'}
+          <span className={
+            product.cantidadProducto === 0
+              ? styles.cardStockEmpty
+              : product.cantidadProducto <= 5
+              ? styles.cardStockWarn
+              : styles.cardStock
+          }>
+            {product.cantidadProducto === 0
+              ? 'Agotado'
+              : product.cantidadProducto > 5
+              ? '+5 disponibles'
+              : `${product.cantidadProducto} disponibles`}
           </span>
         </div>
       </div>

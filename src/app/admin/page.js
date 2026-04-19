@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import styles from './admin.module.css';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
-const SECTIONS = { PRODUCTS: 'products', USERS: 'users' };
+const SECTIONS = { PRODUCTS: 'products', USERS: 'users', SALES: 'sales' };
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 function Spinner() {
@@ -628,6 +628,217 @@ function UsersPanel({ currentUser }) {
   );
 }
 
+// ─── SALES PANEL ──────────────────────────────────────────────────────────────
+function SalesPanel() {
+  const [products, setProducts] = useState([]);
+  const [sales, setSales] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [alert, setAlert] = useState(null);
+  const [form, setForm] = useState({ productoId: '', cantidad: 1, notas: '' });
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [pRes, sRes] = await Promise.all([
+        fetch('/api/products'),
+        fetch('/api/sales'),
+      ]);
+      const [pData, sData] = await Promise.all([pRes.json(), sRes.json()]);
+      setProducts((pData.products || []).filter((p) => p.cantidadProducto > 0));
+      setSales(sData.sales || []);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  const selectedProduct = products.find((p) => String(p.id) === String(form.productoId));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.productoId || form.cantidad < 1) {
+      setAlert({ type: 'error', message: 'Selecciona un producto y cantidad válida' });
+      return;
+    }
+    setSubmitting(true);
+    setAlert(null);
+    try {
+      const res = await fetch('/api/sales', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productoId: Number(form.productoId),
+          cantidad: Number(form.cantidad),
+          notas: form.notas,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al registrar');
+
+      const msg = data.sinStock
+        ? `Venta registrada. ⚠️ El producto "${selectedProduct?.nombreProducto}" se ha agotado.`
+        : `Venta registrada. Stock restante: ${data.stockRestante} unidades.`;
+
+      setAlert({ type: data.sinStock ? 'warning' : 'success', message: msg });
+      setForm({ productoId: '', cantidad: 1, notas: '' });
+      fetchData();
+    } catch (err) {
+      setAlert({ type: 'error', message: err.message });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className={styles.panel}>
+      {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
+
+      <div className={styles.panelHeader}>
+        <div>
+          <h2 className={styles.panelTitle}>Registro de Ventas</h2>
+          <p className={styles.panelSubtitle}>{sales.length} ventas registradas</p>
+        </div>
+      </div>
+
+      {/* Sale Form */}
+      <div className={styles.salesFormCard}>
+        <h3 className={styles.salesFormTitle}>Nueva venta</h3>
+        <form className={styles.salesForm} onSubmit={handleSubmit}>
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="sale-product">Producto *</label>
+              <select
+                id="sale-product"
+                className={styles.input}
+                value={form.productoId}
+                onChange={(e) => setForm((p) => ({ ...p, productoId: e.target.value, cantidad: 1 }))}
+                required
+              >
+                <option value="">Seleccionar producto...</option>
+                {products.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nombreProducto} — Stock: {p.cantidadProducto}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="sale-qty">Cantidad *</label>
+              <input
+                id="sale-qty"
+                type="number"
+                min="1"
+                max={selectedProduct?.cantidadProducto || 9999}
+                className={styles.input}
+                value={form.cantidad}
+                onChange={(e) => setForm((p) => ({ ...p, cantidad: e.target.value }))}
+                required
+              />
+            </div>
+          </div>
+          <div className={styles.formGroup}>
+            <label className={styles.label} htmlFor="sale-notes">Notas (opcional)</label>
+            <input
+              id="sale-notes"
+              type="text"
+              className={styles.input}
+              value={form.notas}
+              onChange={(e) => setForm((p) => ({ ...p, notas: e.target.value }))}
+              placeholder="Cliente, canal de venta, etc."
+            />
+          </div>
+          {selectedProduct && (
+            <div className={styles.salePreview}>
+              <div className={styles.salePreviewRow}>
+                <span>Precio unitario</span>
+                <strong>${parseFloat(selectedProduct.precioProducto).toFixed(2)}</strong>
+              </div>
+              <div className={styles.salePreviewRow}>
+                <span>Total estimado</span>
+                <strong className={styles.saleTotal}>
+                  ${(parseFloat(selectedProduct.precioProducto) * Number(form.cantidad || 0)).toFixed(2)}
+                </strong>
+              </div>
+              <div className={styles.salePreviewRow}>
+                <span>Stock después de venta</span>
+                <strong className={
+                  selectedProduct.cantidadProducto - Number(form.cantidad || 0) <= 0
+                    ? styles.stockEmpty
+                    : selectedProduct.cantidadProducto - Number(form.cantidad || 0) <= 5
+                    ? styles.stockWarn
+                    : styles.stockGood
+                }>
+                  {Math.max(0, selectedProduct.cantidadProducto - Number(form.cantidad || 0))} uds.
+                </strong>
+              </div>
+            </div>
+          )}
+          <div className={styles.modalActions}>
+            <button type="submit" className={styles.btnPrimary} disabled={submitting}>
+              {submitting ? <><Spinner /> Registrando...</> : 'Registrar venta'}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Sales History */}
+      <div className={styles.panelSubtitle} style={{ fontWeight: 700, color: 'var(--clr-text)' }}>Historial</div>
+
+      {loading ? (
+        <div className={styles.loadingCenter}><Spinner /></div>
+      ) : (
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio unit.</th>
+                <th>Total</th>
+                <th>Stock tras venta</th>
+                <th>Notas</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sales.length === 0 ? (
+                <tr><td colSpan={7} className={styles.noData}>Sin ventas registradas</td></tr>
+              ) : (
+                sales.map((s) => (
+                  <tr key={s.id}>
+                    <td><span className={styles.productName}>{s.nombreProducto}</span></td>
+                    <td><span className={styles.categoryTag}>{s.cantidad}</span></td>
+                    <td className={styles.priceCell}>${parseFloat(s.precioUnitario || 0).toFixed(2)}</td>
+                    <td className={styles.priceCell}>${parseFloat(s.total || 0).toFixed(2)}</td>
+                    <td>
+                      <span className={
+                        s.stockRestante === 0 ? styles.stockEmpty
+                        : s.stockRestante <= 5 ? styles.stockWarn
+                        : styles.stockGood
+                      }>
+                        {s.stockRestante === 0 ? 'Agotado' : `${s.stockRestante} uds.`}
+                      </span>
+                    </td>
+                    <td className={styles.dateCell}>{s.notas || '—'}</td>
+                    <td className={styles.dateCell}>
+                      {new Date(s.created_at).toLocaleDateString('es-MX', {
+                        year: 'numeric', month: 'short', day: 'numeric',
+                        hour: '2-digit', minute: '2-digit',
+                      })}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── LOGIN FORM ───────────────────────────────────────────────────────────────
 function LoginForm({ onLogin }) {
   const [form, setForm] = useState({ username: '', password: '' });
@@ -763,6 +974,16 @@ function Dashboard({ username, onLogout }) {
             </svg>
             Usuarios Admin
           </button>
+          <button
+            className={`${styles.sidebarLink} ${section === SECTIONS.SALES ? styles.sidebarLinkActive : ''}`}
+            onClick={() => setSection(SECTIONS.SALES)}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="12" y1="1" x2="12" y2="23" />
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg>
+            Ventas
+          </button>
         </nav>
 
         <div className={styles.sidebarFooter}>
@@ -786,6 +1007,7 @@ function Dashboard({ username, onLogout }) {
       <main className={styles.dashMain}>
         {section === SECTIONS.PRODUCTS && <ProductsPanel />}
         {section === SECTIONS.USERS && <UsersPanel currentUser={username} />}
+        {section === SECTIONS.SALES && <SalesPanel />}
       </main>
     </div>
   );

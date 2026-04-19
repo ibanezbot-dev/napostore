@@ -654,6 +654,16 @@
   border-radius: var(--radius-full);
 }
 
+.stockWarn {
+  display: inline-block;
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--clr-warning);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
 .stockEmpty {
   display: inline-block;
   background: rgba(239, 68, 68, 0.1);
@@ -663,6 +673,62 @@
   padding: 0.2rem 0.6rem;
   border-radius: var(--radius-full);
 }
+
+/* ─── SALES FORM ────────────────────────────────────────────────────────── */
+.salesFormCard {
+  background: var(--clr-bg-card);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: var(--gap-xl);
+}
+
+.salesFormTitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: var(--gap-lg);
+  color: var(--clr-text);
+}
+
+.salesForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+}
+
+.salePreview {
+  background: var(--clr-bg-elevated);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: var(--gap-md) var(--gap-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+
+.salePreviewRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  color: var(--clr-text-muted);
+}
+
+.saleTotal {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.alert_warning {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--clr-warning);
+}
+
 
 .noData {
   text-align: center;
