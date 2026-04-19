@@ -132,7 +132,12 @@ export default function Home() {
       <section className={styles.hero}>
         <div className={styles.heroGlow} />
         <div className={`container ${styles.heroContent}`}>
-          <div className={styles.heroBadge}>✨ Bienvenido a NapoStore</div>
+          <div className={styles.heroBadge}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+            Bienvenido a NapoStore
+          </div>
           <h1 className={styles.heroTitle}>
             Compra lo mejor,<br />
             <span className="gradient-text">vive diferente</span>
@@ -245,10 +250,46 @@ export default function Home() {
         <div className="container">
           <div className={styles.aboutGrid}>
             {[
-              { icon: '🚀', title: 'Entrega Rápida', desc: 'Recibe tus productos en tiempo récord, directo a tu puerta.' },
-              { icon: '🔒', title: 'Compra Segura', desc: 'Transacciones protegidas y tu información siempre segura.' },
-              { icon: '💎', title: 'Calidad Premium', desc: 'Solo los mejores productos, seleccionados con cuidado.' },
-              { icon: '❤️', title: 'Soporte Dedicado', desc: 'Nuestro equipo está siempre listo para ayudarte.' },
+              {
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+                    <path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z" opacity="0" />
+                    <rect x="1" y="3" width="15" height="13" rx="2" />
+                    <path d="m16 8 5 3-5 3V8z" />
+                  </svg>
+                ),
+                title: 'Entrega Rápida',
+                desc: 'Recibe tus productos en tiempo récord, directo a tu puerta.',
+              },
+              {
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                ),
+                title: 'Compra Segura',
+                desc: 'Transacciones protegidas y tu información siempre segura.',
+              },
+              {
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                ),
+                title: 'Calidad Premium',
+                desc: 'Solo los mejores productos, seleccionados con cuidado.',
+              },
+              {
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
+                ),
+                title: 'Soporte Dedicado',
+                desc: 'Nuestro equipo está siempre listo para ayudarte.',
+              },
             ].map((item) => (
               <div key={item.title} className={styles.aboutCard}>
                 <span className={styles.aboutIcon}>{item.icon}</span>

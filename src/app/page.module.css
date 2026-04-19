@@ -508,9 +508,16 @@
 }
 
 .aboutIcon {
-  font-size: 2rem;
-  display: block;
-  margin-bottom: var(--gap-md);
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--gap-md);
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--clr-primary-light);
 }
 
 .aboutCardTitle {
