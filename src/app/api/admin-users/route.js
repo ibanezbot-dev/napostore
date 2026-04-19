@@ -21,7 +21,10 @@ export async function GET(request) {
   }
 }
 
-// POST /api/admin-users — create new admin user (admin only)
+// POST /api/admin-users — Crea un nuevo administrador (Solo Admin)
+// ============================================================================
+// Endpoint para gestionar la creación de usuarios con permisos de admin.
+// ============================================================================
 export async function POST(request) {
   const auth = await getAuthFromRequest(request);
   if (!auth) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
@@ -37,15 +40,19 @@ export async function POST(request) {
       return NextResponse.json({ error: 'La contraseña debe tener al menos 6 caracteres' }, { status: 400 });
     }
 
+    // Seguridad: Hasheo de contraseña antes de guardarla en la base de datos
     const password_hash = await bcrypt.hash(password, 12);
 
+    // INSERCIÓN EN LA BD
+    // Se inserta en la tabla 'admin_users' el usuario junto con la contraseña cifrada.
     const { data, error } = await supabaseAdmin
       .from('admin_users')
-      .insert([{ username, password_hash }])
-      .select('id, username, created_at')
+      .insert([{ username, password_hash }]) // Se manda la contraseña ya convertida en Hash
+      .select('id, username, created_at')    // Explicitamente seleccionamos NO DEVOLVER el hash de vuelta, solo estos 3 campos.
       .single();
 
     if (error) {
+      // Manejo del error de violación de restricción UNIQUE de PostgreSQL (código '23505')
       if (error.code === '23505') {
         return NextResponse.json({ error: 'El nombre de usuario ya existe' }, { status: 409 });
       }

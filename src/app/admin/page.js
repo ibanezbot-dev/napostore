@@ -144,7 +144,7 @@ function ProductModal({ product, onClose, onSave }) {
 
           <div className={styles.formRow}>
             <div className={styles.formGroup}>
-              <label className={styles.label} htmlFor="precioProducto">Precio (USD) *</label>
+              <label className={styles.label} htmlFor="precioProducto">Precio (MXN) *</label>
               <input
                 id="precioProducto"
                 name="precioProducto"
@@ -628,7 +628,13 @@ function UsersPanel({ currentUser }) {
   );
 }
 
-// ─── SALES PANEL ──────────────────────────────────────────────────────────────
+// ─── PANEL DE REGISTRO Y GESTIÓN DE VENTAS ────────────────────────────────────
+// ============================================================================
+// Este componente de React es el encargado de interactuar con el backend
+// para registrar cada venta manual. Las validaciones de stock restantes
+// y totales se manejan internamente, comunicándose mediante `fetch` con
+// las rutas del API vistas anteriormente (/api/sales y /api/products).
+// ============================================================================
 function SalesPanel() {
   const [products, setProducts] = useState([]);
   const [sales, setSales] = useState([]);
@@ -637,14 +643,19 @@ function SalesPanel() {
   const [alert, setAlert] = useState(null);
   const [form, setForm] = useState({ productoId: '', cantidad: 1, notas: '' });
 
+  // fetchData se encarga de solicitar al BACKEND la información de la base de datos
+  // para pintar tanto el dropdown de productos como la tabla histórica de ventas.
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
+      // Promise.all permite hacer 2 llamadas HTTP concurrentes al backend a la vez.
       const [pRes, sRes] = await Promise.all([
-        fetch('/api/products'),
-        fetch('/api/sales'),
+        fetch('/api/products'), // Trae todos los productos (para el Select de venta)
+        fetch('/api/sales'),    // Trae todas las ventas del historial
       ]);
       const [pData, sData] = await Promise.all([pRes.json(), sRes.json()]);
+
+      // Filtrar el array para mosrar únicamente productos donde haya existencias > 0
       setProducts((pData.products || []).filter((p) => p.cantidadProducto > 0));
       setSales(sData.sales || []);
     } finally {
@@ -656,6 +667,7 @@ function SalesPanel() {
 
   const selectedProduct = products.find((p) => String(p.id) === String(form.productoId));
 
+  // LOGICA PARA ENVIAR VENTA A LA BASE DE DATOS
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.productoId || form.cantidad < 1) {
@@ -665,11 +677,11 @@ function SalesPanel() {
     setSubmitting(true);
     setAlert(null);
     try {
+      // 1. Envío de datos al Endpoint encargado de la BD transaccional de ventas.
       const res = await fetch('/api/sales', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          productoId: Number(form.productoId),
           cantidad: Number(form.cantidad),
           notas: form.notas,
         }),
@@ -767,8 +779,8 @@ function SalesPanel() {
                   selectedProduct.cantidadProducto - Number(form.cantidad || 0) <= 0
                     ? styles.stockEmpty
                     : selectedProduct.cantidadProducto - Number(form.cantidad || 0) <= 5
-                    ? styles.stockWarn
-                    : styles.stockGood
+                      ? styles.stockWarn
+                      : styles.stockGood
                 }>
                   {Math.max(0, selectedProduct.cantidadProducto - Number(form.cantidad || 0))} uds.
                 </strong>
@@ -815,8 +827,8 @@ function SalesPanel() {
                     <td>
                       <span className={
                         s.stockRestante === 0 ? styles.stockEmpty
-                        : s.stockRestante <= 5 ? styles.stockWarn
-                        : styles.stockGood
+                          : s.stockRestante <= 5 ? styles.stockWarn
+                            : styles.stockGood
                       }>
                         {s.stockRestante === 0 ? 'Agotado' : `${s.stockRestante} uds.`}
                       </span>
@@ -1023,7 +1035,7 @@ export default function AdminPage() {
     fetch('/api/auth/check')
       .then((r) => r.json())
       .then((d) => { if (d.username) setUser(d.username); })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setChecking(false));
   }, []);
 

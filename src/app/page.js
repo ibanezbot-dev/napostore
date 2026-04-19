@@ -67,15 +67,27 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
 
+  // ==========================================================================
+  // FETCH DE PRODUCTOS DESDE EL BACKEND
+  // ==========================================================================
+  // Esta función `fetchProducts` se comunica con nuestro endpoint GET /api/products.
+  // El endpoint es quien realmente ejecuta la consulta en la Base de Datos (Supabase).
   const fetchProducts = useCallback(async (searchVal, categoryVal) => {
     setLoading(true);
     try {
+      // Preparamos los parámetros de búsqueda en la URL
       const params = new URLSearchParams();
       if (searchVal) params.set('search', searchVal);
       if (categoryVal && categoryVal !== 'all') params.set('category', categoryVal);
 
+      // Disparamos la petición. Si searchVal='Zapatos', la URL será /api/products?search=Zapatos
       const res = await fetch(`/api/products?${params.toString()}`);
+      
+      // Transformamos la respuesta en un objeto JavaScript
       const data = await res.json();
+      
+      // Actualizamos el estado interno de React para que la vista se redibuje
+      // mostrando los productos venidos desde la base de datos.
       setProducts(data.products || []);
     } catch (err) {
       console.error(err);
