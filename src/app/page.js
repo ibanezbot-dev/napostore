@@ -43,14 +43,14 @@ function ProductCard({ product }) {
             product.cantidadProducto === 0
               ? styles.cardStockEmpty
               : product.cantidadProducto <= 5
-              ? styles.cardStockWarn
-              : styles.cardStock
+                ? styles.cardStockWarn
+                : styles.cardStock
           }>
             {product.cantidadProducto === 0
               ? 'Agotado'
               : product.cantidadProducto > 5
-              ? '+5 disponibles'
-              : `${product.cantidadProducto} disponibles`}
+                ? '+5 disponibles'
+                : `${product.cantidadProducto} disponibles`}
           </span>
         </div>
       </div>
@@ -269,16 +269,6 @@ export default function Home() {
                 ),
                 title: 'Entrega Rápida',
                 desc: 'Recibe tus productos en tiempo récord, directo a tu puerta.',
-              },
-              {
-                icon: (
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" />
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                  </svg>
-                ),
-                title: 'Compra Segura',
-                desc: 'Transacciones protegidas y tu información siempre segura.',
               },
               {
                 icon: (
