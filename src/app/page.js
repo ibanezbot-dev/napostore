@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import styles from './page.module.css';
 
 // ─── PRODUCT CARD ─────────────────────────────────────────────────────────────
-function ProductCard({ product }) {
+function ProductCard({ product, onAddToCart }) {
   const [imgError, setImgError] = useState(false);
 
   return (
@@ -53,6 +53,15 @@ function ProductCard({ product }) {
                 : `${product.cantidadProducto} disponibles`}
           </span>
         </div>
+        {product.cantidadProducto > 0 && (
+          <button
+            className={styles.addToCartBtn}
+            onClick={() => onAddToCart(product)}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            Agregar al carrito
+          </button>
+        )}
       </div>
     </div>
   );
@@ -66,6 +75,19 @@ export default function Home() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
+
+  // ── CART STATE ──
+  const [cart, setCart] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [checkoutForm, setCheckoutForm] = useState({ 
+    nombre: '', 
+    calle: '', 
+    numero: '', 
+    colonia: '', 
+    referencias: '', 
+    cp: '', 
+    notas: '' 
+  });
 
   // ==========================================================================
   // FETCH DE PRODUCTOS DESDE EL BACKEND
@@ -119,6 +141,65 @@ export default function Home() {
 
   const handleCategoryChange = (cat) => {
     setActiveCategory(cat);
+  };
+
+  // ── CART LOGIC ──
+  const handleAddToCart = (product) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.id === product.id);
+      if (existing) {
+        if (existing.qty >= product.cantidadProducto) return prev; // Max stock reached
+        return prev.map((item) => item.id === product.id ? { ...item, qty: item.qty + 1 } : item);
+      }
+      return [...prev, { ...product, qty: 1 }];
+    });
+    setIsCartOpen(true);
+  };
+
+  const handleRemoveFromCart = (productId) => {
+    setCart((prev) => prev.filter((item) => item.id !== productId));
+  };
+
+  const handleUpdateQty = (productId, delta, maxStock) => {
+    setCart((prev) => prev.map((item) => {
+      if (item.id === productId) {
+        const newQty = item.qty + delta;
+        if (newQty > 0 && newQty <= maxStock) {
+          return { ...item, qty: newQty };
+        }
+      }
+      return item;
+    }));
+  };
+
+  const cartTotal = cart.reduce((sum, item) => sum + (item.precioProducto * item.qty), 0);
+  const cartItemCount = cart.reduce((count, item) => count + item.qty, 0);
+
+  const handleWhatsAppCheckout = (e) => {
+    e.preventDefault();
+    if (cart.length === 0) return;
+
+    // Configura el número aquí (código de país sin el '+' + número)
+    const whatsappNumber = '522871204151'; // Cambiar por el número real del cliente
+
+    let text = `*¡Hola! Quiero realizar un pedido en NapoStore*\n\n`;
+    text += `*Mis datos:*\n`;
+    text += `- Nombre: ${checkoutForm.nombre}\n`;
+    text += `\n*Dirección de Entrega:*\n`;
+    text += `- Calle: ${checkoutForm.calle} #${checkoutForm.numero}\n`;
+    text += `- Colonia: ${checkoutForm.colonia}\n`;
+    if (checkoutForm.cp) text += `- Código Postal: ${checkoutForm.cp}\n`;
+    if (checkoutForm.referencias) text += `- Entre calles / Referencias: ${checkoutForm.referencias}\n`;
+    if (checkoutForm.notas) text += `\n*Notas adicionales:*\n${checkoutForm.notas}\n`;
+
+    text += `\n*Mi Pedido:*\n`;
+    cart.forEach(item => {
+      text += `- ${item.qty}x ${item.nombreProducto} ($${item.precioProducto} c/u) = $${item.precioProducto * item.qty}\n`;
+    });
+    text += `\n*Total a pagar: $${cartTotal}*`;
+
+    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
   };
 
   return (
@@ -245,7 +326,7 @@ export default function Home() {
                   className={styles.cardWrapper}
                   style={{ animationDelay: `${i * 60}ms` }}
                 >
-                  <ProductCard product={product} />
+                  <ProductCard product={product} onAddToCart={handleAddToCart} />
                 </div>
               ))}
             </div>
@@ -311,6 +392,137 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* ── FLOATING CART BUTTON ── */}
+      <button
+        className={styles.cartFloatBtn}
+        onClick={() => setIsCartOpen(true)}
+        aria-label="Ver carrito"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        {cartItemCount > 0 && (
+          <span className={styles.cartBadge}>{cartItemCount}</span>
+        )}
+      </button>
+
+      {/* ── CART DRAWER / MODAL ── */}
+      <div className={`${styles.cartOverlay} ${isCartOpen ? styles.open : ''}`} onClick={() => setIsCartOpen(false)}>
+        <div className={styles.cartDrawer} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.cartHeader}>
+            <h2 className={styles.cartTitle}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              Tu Pedido
+            </h2>
+            <button className={styles.cartCloseBtn} onClick={() => setIsCartOpen(false)}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+
+          <div className={styles.cartBody}>
+            {cart.length === 0 ? (
+              <div className={styles.cartEmpty}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <p>Tu carrito está vacío</p>
+              </div>
+            ) : (
+              cart.map((item) => (
+                <div key={item.id} className={styles.cartItem}>
+                  {item.imagenProducto ? (
+                    <img src={item.imagenProducto} alt={item.nombreProducto} className={styles.cartItemImg} />
+                  ) : (
+                    <div className={styles.cartItemImg} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></svg>
+                    </div>
+                  )}
+                  <div className={styles.cartItemInfo}>
+                    <span className={styles.cartItemName}>{item.nombreProducto}</span>
+                    <span className={styles.cartItemPrice}>${parseFloat(item.precioProducto).toFixed(2)}</span>
+                  </div>
+                  <div className={styles.cartItemControls}>
+                    <button className={styles.cartQtyBtn} onClick={() => handleUpdateQty(item.id, -1, item.cantidadProducto)}>-</button>
+                    <span className={styles.cartItemQty}>{item.qty}</span>
+                    <button className={styles.cartQtyBtn} onClick={() => handleUpdateQty(item.id, 1, item.cantidadProducto)}>+</button>
+                  </div>
+                  <button className={styles.cartItemRemove} onClick={() => handleRemoveFromCart(item.id)}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+
+          {cart.length > 0 && (
+            <div className={styles.cartFooter}>
+              <div className={styles.cartTotal}>
+                <span>Total:</span>
+                <span style={{ color: '#1E3A8A' }}>${cartTotal.toFixed(2)}</span>
+              </div>
+
+              <form className={styles.checkoutForm} onSubmit={handleWhatsAppCheckout}>
+                <input
+                  type="text"
+                  className={styles.checkoutInput}
+                  placeholder="Tu Nombre Completo"
+                  value={checkoutForm.nombre}
+                  onChange={(e) => setCheckoutForm({ ...checkoutForm, nombre: e.target.value })}
+                  required
+                />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  <input
+                    type="text"
+                    className={styles.checkoutInput}
+                    placeholder="Calle"
+                    value={checkoutForm.calle}
+                    onChange={(e) => setCheckoutForm({ ...checkoutForm, calle: e.target.value })}
+                    required
+                  />
+                  <input
+                    type="text"
+                    className={styles.checkoutInput}
+                    placeholder="Número"
+                    value={checkoutForm.numero}
+                    onChange={(e) => setCheckoutForm({ ...checkoutForm, numero: e.target.value })}
+                    required
+                  />
+                </div>
+                <input
+                  type="text"
+                  className={styles.checkoutInput}
+                  placeholder="Colonia"
+                  value={checkoutForm.colonia}
+                  onChange={(e) => setCheckoutForm({ ...checkoutForm, colonia: e.target.value })}
+                  required
+                />
+                <input
+                  type="text"
+                  className={styles.checkoutInput}
+                  placeholder="Entre qué calles / Referencias"
+                  value={checkoutForm.referencias}
+                  onChange={(e) => setCheckoutForm({ ...checkoutForm, referencias: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className={styles.checkoutInput}
+                  placeholder="Código Postal"
+                  value={checkoutForm.cp}
+                  onChange={(e) => setCheckoutForm({ ...checkoutForm, cp: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className={styles.checkoutInput}
+                  placeholder="Notas adicionales (opcional)"
+                  value={checkoutForm.notas}
+                  onChange={(e) => setCheckoutForm({ ...checkoutForm, notas: e.target.value })}
+                />
+                <button type="submit" className={styles.btnWhatsapp} style={{ marginTop: '8px' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  Procesar Pedido
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
