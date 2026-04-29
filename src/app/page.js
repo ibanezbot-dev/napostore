@@ -82,10 +82,10 @@ export default function Home() {
 
       // Disparamos la petición. Si searchVal='Zapatos', la URL será /api/products?search=Zapatos
       const res = await fetch(`/api/products?${params.toString()}`);
-      
+
       // Transformamos la respuesta en un objeto JavaScript
       const data = await res.json();
-      
+
       // Actualizamos el estado interno de React para que la vista se redibuje
       // mostrando los productos venidos desde la base de datos.
       setProducts(data.products || []);
@@ -127,18 +127,9 @@ export default function Home() {
       <header className={styles.header}>
         <div className={`container ${styles.headerInner}`}>
           <div className={styles.logo}>
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <defs>
-                <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#7c3aed" />
-                  <stop offset="100%" stopColor="#06d6f0" />
-                </linearGradient>
-              </defs>
-              <rect width="32" height="32" rx="8" fill="url(#logoGrad)" />
-              <path d="M8 10h16M8 16h12M8 22h8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" />
-            </svg>
+            <img src="/logo.png" alt="NapoStore Logo" width={64} height={64} style={{ objectFit: 'contain' }} />
             <span className={styles.logoText}>
-              Napo<span className="gradient-text">Store</span>
+              Napo<span style={{ color: '#3B82F6' }}>Store</span>
             </span>
           </div>
           <nav className={styles.nav}>
@@ -153,18 +144,15 @@ export default function Home() {
         <div className={styles.heroGlow} />
         <div className={`container ${styles.heroContent}`}>
           <div className={styles.heroBadge}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-            </svg>
             Bienvenido a NapoStore
           </div>
           <h1 className={styles.heroTitle}>
             Compra lo mejor,<br />
-            <span className="gradient-text">vive diferente</span>
+            <span style={{ color: '#1E3A8A' }}>vive diferente</span>
           </h1>
           <p className={styles.heroSubtitle}>
-            Descubre nuestra selección de productos cuidadosamente elegidos para ti.
-            Calidad y estilo al mejor precio.
+            Descubre nuestra selección de productos seleccionados con la mejor calidad.<br></br>
+            Envíos rápidos y seguros.
           </p>
           <a href="#products" className={styles.heroCta}>
             Explorar productos
@@ -184,7 +172,7 @@ export default function Home() {
         <div className="container">
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>
-              Nuestros <span className="gradient-text">Productos</span>
+              Nuestros <span style={{ color: '#3B82F6' }}>Productos</span>
             </h2>
             <p className={styles.sectionSubtitle}>Encuentra exactamente lo que buscas</p>
           </div>
@@ -273,14 +261,14 @@ export default function Home() {
               {
                 icon: (
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
-                    <path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z" opacity="0" />
-                    <rect x="1" y="3" width="15" height="13" rx="2" />
-                    <path d="m16 8 5 3-5 3V8z" />
+                    <rect x="1" y="3" width="15" height="13" rx="1" />
+                    <path d="M16 8h4l3 4v4h-7V8z" />
+                    <circle cx="5.5" cy="18.5" r="1.5" />
+                    <circle cx="18.5" cy="18.5" r="1.5" />
                   </svg>
                 ),
-                title: 'Entrega Rápida',
-                desc: 'Recibe tus productos en tiempo récord, directo a tu puerta.',
+                title: 'Entregas Personales',
+                desc: 'Recibe tus productos en tiempo récord, directo a tu puerta en Tuxtepec, Oaxaca.',
               },
               {
                 icon: (
@@ -298,7 +286,7 @@ export default function Home() {
                   </svg>
                 ),
                 title: 'Soporte Dedicado',
-                desc: 'Nuestro equipo está siempre listo para ayudarte.',
+                desc: 'Nuestro equipo está siempre listo para ayudarte en lo que necesites.',
               },
             ].map((item) => (
               <div key={item.title} className={styles.aboutCard}>
@@ -316,16 +304,7 @@ export default function Home() {
         <div className="container">
           <div className={styles.footerInner}>
             <div className={styles.logo}>
-              <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-                <defs>
-                  <linearGradient id="logoGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#7c3aed" />
-                    <stop offset="100%" stopColor="#06d6f0" />
-                  </linearGradient>
-                </defs>
-                <rect width="32" height="32" rx="8" fill="url(#logoGrad2)" />
-                <path d="M8 10h16M8 16h12M8 22h8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" />
-              </svg>
+              <img src="/logo.png" alt="NapoStore Logo" width={48} height={48} style={{ objectFit: 'contain' }} />
               <span className={styles.logoText}>NapoStore</span>
             </div>
             <p className={styles.footerCopy}>© {new Date().getFullYear()} NapoStore. Todos los derechos reservados.</p>

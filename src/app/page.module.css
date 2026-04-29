@@ -10,7 +10,7 @@
   position: sticky;
   top: 0;
   z-index: var(--z-header);
-  background: rgba(9, 9, 15, 0.85);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--clr-border);
@@ -72,7 +72,7 @@
   position: relative;
   overflow: hidden;
   padding: 7rem 0 6rem;
-  background: var(--grad-hero);
+  background: var(--clr-bg-elevated);
 }
 
 .heroGlow {
@@ -98,9 +98,9 @@
   display: inline-flex;
   align-items: center;
   gap: var(--gap-xs);
-  background: rgba(124, 58, 237, 0.15);
-  border: 1px solid rgba(124, 58, 237, 0.3);
-  color: var(--clr-primary-light);
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  color: var(--clr-primary-dark);
   font-size: 0.8125rem;
   font-weight: 600;
   padding: 0.375rem 0.875rem;
@@ -131,20 +131,21 @@
   display: inline-flex;
   align-items: center;
   gap: var(--gap-sm);
-  background: var(--grad-primary);
+  background: var(--clr-primary);
   color: #fff;
   font-weight: 700;
   font-size: 1rem;
   padding: 0.875rem 2rem;
   border-radius: var(--radius-full);
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), background var(--transition-base);
   animation: fadeInUp 0.6s 0.3s both;
-  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
 
 .heroCta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(124, 58, 237, 0.6);
+  background: var(--clr-primary-dark);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
 
 .heroOrbs {
@@ -164,9 +165,10 @@
 .orb1 {
   width: 400px;
   height: 400px;
-  background: var(--clr-primary);
+  background: var(--clr-primary-light);
   top: -100px;
   right: -100px;
+  opacity: 0.15;
 }
 
 .orb2 {
@@ -176,6 +178,7 @@
   bottom: -80px;
   left: -80px;
   animation-delay: 3s;
+  opacity: 0.1;
 }
 
 /* ─── PRODUCTS SECTION ──────────────────────────────────────────────────────── */
@@ -291,10 +294,10 @@
 }
 
 .filterActive {
-  background: var(--grad-primary);
+  background: var(--clr-primary);
   border-color: transparent;
   color: #fff !important;
-  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.2);
 }
 
 /* ─── PRODUCT GRID ──────────────────────────────────────────────────────────── */
@@ -310,7 +313,7 @@
 
 /* ─── PRODUCT CARD ──────────────────────────────────────────────────────────── */
 .card {
-  background: var(--grad-card);
+  background: var(--clr-bg-card);
   border: 1px solid var(--clr-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -323,7 +326,7 @@
 .card:hover {
   transform: translateY(-4px);
   border-color: var(--clr-border-accent);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(124, 58, 237, 0.15);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), 0 0 15px rgba(59, 130, 246, 0.1);
 }
 
 .cardImage {
@@ -356,9 +359,10 @@
   position: absolute;
   top: 0.625rem;
   left: 0.625rem;
-  background: rgba(124, 58, 237, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(8px);
-  color: #fff;
+  color: var(--clr-text);
+  border: 1px solid var(--clr-border);
   font-size: 0.6875rem;
   font-weight: 700;
   padding: 0.2rem 0.6rem;
@@ -497,7 +501,7 @@
 .about {
   padding: var(--gap-3xl) 0;
   border-top: 1px solid var(--clr-border);
-  background: linear-gradient(180deg, transparent, var(--clr-bg-card));
+  background: var(--clr-bg-elevated);
 }
 
 .aboutGrid {
@@ -527,10 +531,10 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto var(--gap-md);
-  background: rgba(124, 58, 237, 0.1);
-  border: 1px solid rgba(124, 58, 237, 0.2);
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: var(--radius-md);
-  color: var(--clr-primary-light);
+  color: var(--clr-primary);
 }
 
 .aboutCardTitle {
@@ -550,7 +554,7 @@
 .footer {
   border-top: 1px solid var(--clr-border);
   padding: var(--gap-xl) 0;
-  background: var(--clr-bg-card);
+  background: #f1f5f9;
 }
 
 .footerInner {

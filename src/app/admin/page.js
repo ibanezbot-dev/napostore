@@ -13,10 +13,18 @@ function Spinner() {
 
 function Alert({ type, message, onClose }) {
   if (!message) return null;
+  const icons = {
+    success: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{flexShrink: 0}}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
+    error: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{flexShrink: 0}}><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>,
+    warning: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{flexShrink: 0}}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  };
   return (
-    <div className={`${styles.alert} ${styles[`alert_${type}`]}`}>
-      <span>{message}</span>
-      <button onClick={onClose} className={styles.alertClose}>×</button>
+    <div className={`${styles.alert} ${styles[`alert_${type}`]}`} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      {icons[type]}
+      <span style={{ flex: 1 }}>{message}</span>
+      <button onClick={onClose} className={styles.alertClose}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
     </div>
   );
 }
@@ -185,7 +193,8 @@ function ProductModal({ product, onClose, onSave }) {
                     className={styles.removeImage}
                     onClick={() => { setPreview(''); setForm((p) => ({ ...p, imagenProducto: '' })); }}
                   >
-                    ✕ Quitar imagen
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{marginRight: '4px'}}><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    Quitar imagen
                   </button>
                 </div>
               ) : (
@@ -690,7 +699,7 @@ function SalesPanel() {
       if (!res.ok) throw new Error(data.error || 'Error al registrar');
 
       const msg = data.sinStock
-        ? `Venta registrada. ⚠️ El producto "${selectedProduct?.nombreProducto}" se ha agotado.`
+        ? `Venta registrada. El producto "${selectedProduct?.nombreProducto}" se ha agotado.`
         : `Venta registrada. Stock restante: ${data.stockRestante} unidades.`;
 
       setAlert({ type: data.sinStock ? 'warning' : 'success', message: msg });
@@ -882,16 +891,7 @@ function LoginForm({ onLogin }) {
       <div className={styles.loginGlow} />
       <div className={styles.loginCard}>
         <div className={styles.loginLogo}>
-          <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
-            <defs>
-              <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#7c3aed" />
-                <stop offset="100%" stopColor="#06d6f0" />
-              </linearGradient>
-            </defs>
-            <rect width="32" height="32" rx="8" fill="url(#lg)" />
-            <path d="M8 10h16M8 16h12M8 22h8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" />
-          </svg>
+          <img src="/logo.png" alt="NapoStore Logo" width={90} height={90} style={{ objectFit: 'contain' }} />
           <span className={styles.loginLogoText}>NapoStore</span>
         </div>
         <h1 className={styles.loginTitle}>Panel Admin</h1>
@@ -949,16 +949,7 @@ function Dashboard({ username, onLogout }) {
       {/* Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarLogo}>
-          <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-            <defs>
-              <linearGradient id="lgSide" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#7c3aed" />
-                <stop offset="100%" stopColor="#06d6f0" />
-              </linearGradient>
-            </defs>
-            <rect width="32" height="32" rx="8" fill="url(#lgSide)" />
-            <path d="M8 10h16M8 16h12M8 22h8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" />
-          </svg>
+          <img src="/logo.png" alt="NapoStore Logo" width={56} height={56} style={{ objectFit: 'contain' }} />
           <div>
             <div className={styles.sidebarBrand}>NapoStore</div>
             <div className={styles.sidebarRole}>Admin Panel</div>

@@ -5,26 +5,26 @@
    ============================================= */
 :root {
   /* Brand Colors */
-  --clr-primary: #7c3aed;
-  --clr-primary-light: #a78bfa;
-  --clr-primary-dark: #5b21b6;
-  --clr-accent: #06d6f0;
+  --clr-primary: #3B82F6;
+  --clr-primary-light: #60A5FA;
+  --clr-primary-dark: #1E3A8A;
+  --clr-accent: #06b6d4;
   --clr-accent-dark: #0891b2;
 
   /* Backgrounds */
-  --clr-bg: #09090f;
-  --clr-bg-card: #111120;
-  --clr-bg-elevated: #16162a;
-  --clr-bg-glass: rgba(255, 255, 255, 0.04);
+  --clr-bg: #ffffff;
+  --clr-bg-card: #ffffff;
+  --clr-bg-elevated: #f8fafc;
+  --clr-bg-glass: rgba(255, 255, 255, 0.9);
 
   /* Text */
-  --clr-text: #f0eeff;
-  --clr-text-muted: #8b8aad;
-  --clr-text-subtle: #4b4b6a;
+  --clr-text: #0f172a;
+  --clr-text-muted: #475569;
+  --clr-text-subtle: #94a3b8;
 
   /* Borders */
-  --clr-border: rgba(255, 255, 255, 0.08);
-  --clr-border-accent: rgba(124, 58, 237, 0.4);
+  --clr-border: #e2e8f0;
+  --clr-border-accent: rgba(59, 130, 246, 0.3);
 
   /* Status */
   --clr-success: #10b981;
@@ -32,10 +32,10 @@
   --clr-warning: #f59e0b;
 
   /* Gradients */
-  --grad-primary: linear-gradient(135deg, #7c3aed 0%, #06d6f0 100%);
-  --grad-hero: linear-gradient(135deg, #09090f 0%, #1a0533 50%, #091827 100%);
-  --grad-card: linear-gradient(135deg, #111120, #1a1a30);
-  --grad-glow: radial-gradient(ellipse at center, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+  --grad-primary: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+  --grad-hero: #ffffff;
+  --grad-card: #ffffff;
+  --grad-glow: none;
 
   /* Spacing */
   --gap-xs: 0.25rem;

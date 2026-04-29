@@ -182,7 +182,7 @@
   height: 36px;
   min-width: 36px;
   border-radius: 50%;
-  background: var(--grad-primary);
+  background: var(--clr-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -380,7 +380,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--gap-sm);
-  background: var(--grad-primary);
+  background: var(--clr-primary);
   color: #fff;
   font-weight: 700;
   font-size: 0.9375rem;
@@ -717,10 +717,7 @@
 .saleTotal {
   font-family: var(--font-display);
   font-size: 1.125rem;
-  background: var(--grad-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--clr-primary-dark);
 }
 
 .alert_warning {
@@ -782,7 +779,7 @@
   height: 36px;
   min-width: 36px;
   border-radius: 50%;
-  background: var(--grad-primary);
+  background: var(--clr-primary);
   display: flex;
   align-items: center;
   justify-content: center;
