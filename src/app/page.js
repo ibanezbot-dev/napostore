@@ -196,7 +196,8 @@ export default function Home() {
     cart.forEach(item => {
       text += `- ${item.qty}x ${item.nombreProducto} ($${item.precioProducto} c/u) = $${item.precioProducto * item.qty}\n`;
     });
-    text += `\n*Total a pagar: $${cartTotal}*`;
+    text += `\n*Total a pagar: $${cartTotal}*\n`;
+    text += `\n_Nota: El pedido no aparta los artículos. Los artículos se apartarán únicamente hasta que se realice el pago correspondiente._`;
 
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
@@ -514,6 +515,11 @@ export default function Home() {
                   value={checkoutForm.notas}
                   onChange={(e) => setCheckoutForm({ ...checkoutForm, notas: e.target.value })}
                 />
+                
+                <p style={{ fontSize: '0.75rem', color: 'var(--clr-text-muted)', lineHeight: '1.4', marginTop: '4px', fontStyle: 'italic' }}>
+                  Nota: Realizar este pedido no aparta los artículos. Tus artículos se reservarán únicamente cuando se confirme el pago.
+                </p>
+
                 <button type="submit" className={styles.btnWhatsapp} style={{ marginTop: '8px' }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                   Procesar Pedido
